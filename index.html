@@ -8,15 +8,6 @@
 <style>
   *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
-[-------testlocation-------]
- <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@boomi/embedkit-cdn/embedkit-cdn.css" />
-<script>
-  window.BoomiEmbed = {
-    publicToken: "pk_b10b99b3-cb9c-4941-b877-6ff4722cf051",
-    agentId: "project_afe03fa3-5a38-4be9-8577-2f6e2a65ea23",
-    mountId: "boomi-agent",
-    serverBase: "https://api.boomi.space/api/v1"
-  };
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@boomi/embedkit-cdn/embedkit-cdn.umd.js" async></script>
 <div id="boomi-agent"></div>
@@ -108,8 +99,15 @@
     font-size: 13px;
     font-weight: 600;
     color: var(--accent);
-  }
-
+  }/*[-------testlocation-------]*/
+ <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@boomi/embedkit-cdn/embedkit-cdn.css" />
+<script>
+  window.BoomiEmbed = {
+    publicToken: "pk_b10b99b3-cb9c-4941-b877-6ff4722cf051",
+    agentId: "project_afe03fa3-5a38-4be9-8577-2f6e2a65ea23",
+    mountId: "boomi-agent",
+    serverBase: "https://api.boomi.space/api/v1"
+  };
   /* ── Layout ── */
   .layout {
     display: flex;
