@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Podium Beverage Co. — Distribution Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --bg: #0f1114;
+    --surface: #181b20;
+    --surface-raised: #1f2329;
+    --border: #2a2e35;
+    --border-light: #353a42;
+    --text: #e8e9eb;
+    --text-muted: #8b9099;
+    --text-dim: #5c6370;
+    --accent: #4ae68a;
+    --accent-dim: #2a8a52;
+    --warning: #f5a623;
+    --danger: #e85454;
+    --info: #5ba4f5;
+    --podium-green: #4ae68a;
+    --podium-dark-green: #1a3a28;
+  }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.5;
+  }
+
+  /* ── Top Nav ── */
+  .topnav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 32px;
+    height: 56px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .topnav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .topnav-logo svg { flex-shrink: 0; }
+  .topnav-logo span {
+    font-family: 'Instrument Serif', serif;
+    font-size: 20px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .topnav-logo .divider {
+    font-family: 'DM Sans', sans-serif;
+    color: var(--text-dim);
+    font-size: 14px;
+    font-weight: 400;
+    margin-left: 4px;
+  }
+  .topnav-right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .topnav-right .env-badge {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    background: var(--podium-dark-green);
+    color: var(--accent);
+    padding: 4px 10px;
+    border-radius: 4px;
+  }
+  .topnav-right .user-name {
+    font-size: 13px;
+    color: var(--text-muted);
+  }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--accent-dim);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent);
+  }
+
+  /* ── Layout ── */
+  .layout {
+    display: flex;
+    min-height: calc(100vh - 56px);
+  }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 220px;
+    background: var(--surface);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    flex-shrink: 0;
+  }
+  .sidebar-section {
+    padding: 0 16px;
+    margin-bottom: 24px;
+  }
+  .sidebar-section-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+    padding: 0 8px;
+  }
+  .sidebar-link {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 13px;
+    color: var(--text-muted);
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .sidebar-link:hover { background: var(--surface-raised); color: var(--text); }
+  .sidebar-link.active { background: var(--podium-dark-green); color: var(--accent); }
+  .sidebar-link svg { flex-shrink: 0; opacity: 0.6; }
+  .sidebar-link.active svg { opacity: 1; }
+
+  /* ── Main ── */
+  .main {
+    flex: 1;
+    padding: 28px 32px;
+    overflow-y: auto;
+  }
+
+  .page-header {
+    margin-bottom: 28px;
+  }
+  .page-header h1 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 28px;
+    font-weight: 400;
+    color: var(--text);
+  }
+
+  /* ── KPI Cards ── */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+  .kpi-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .kpi-label {
+    font-size: 12px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 8px;
+  }
+  .kpi-value {
+    font-size: 26px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.1;
+  }
+  .kpi-change {
+    font-size: 12px;
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+  .kpi-change.up { color: var(--accent); }
+  .kpi-change.down { color: var(--danger); }
+  .kpi-change.flat { color: var(--text-dim); }
+
+  /* ── Content Grid ── */
+  .content-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 16px;
+  }
+  .card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-badge {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--surface-raised);
+    color: var(--text-muted);
+  }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  th {
+    text-align: left;
+    padding: 8px 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-dim);
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 12px;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+  }
+  tr:last-child td { border-bottom: none; }
+
+  .status-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-right: 6px;
+  }
+  .status-dot.green { background: var(--accent); }
+  .status-dot.yellow { background: var(--warning); }
+  .status-dot.red { background: var(--danger); }
+
+  .bar-wrap {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-raised);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+  }
+  .bar-fill.green { background: var(--accent); }
+  .bar-fill.yellow { background: var(--warning); }
+  .bar-fill.red { background: var(--danger); }
+
+  /* ── Full-width card ── */
+  .full-card {
+    grid-column: 1 / -1;
+  }
+
+  /* ── Business Rules card ── */
+  .rules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-top: 4px;
+  }
+  .rule-item {
+    background: var(--surface-raised);
+    border-radius: 8px;
+    padding: 14px 16px;
+  }
+  .rule-label {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    margin-bottom: 6px;
+  }
+  .rule-value {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .rule-value .unit {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--text-muted);
+    margin-left: 4px;
+  }
+
+  /* ── Responsive ── */
+  @media (max-width: 900px) {
+    .kpi-row { grid-template-columns: 1fr; }
+    .content-grid { grid-template-columns: 1fr; }
+    .rules-grid { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .main { padding: 20px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ════ TOP NAV ════ -->
+<nav class="topnav">
+  <div class="topnav-logo">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="6" fill="#1a3a28"/>
+      <path d="M8 20V8h4.5c2.5 0 4 1.4 4 3.5S15 15 12.5 15H11v5H8z" fill="#4ae68a"/>
+      <circle cx="18" cy="18" r="3" fill="#4ae68a" opacity="0.5"/>
+    </svg>
+    <span>Podium Beverage Co.</span>
+    <span class="divider">/ Distribution Portal</span>
+  </div>
+  <div class="topnav-right">
+    <span class="env-badge">Internal</span>
+    <span class="user-name">Dana Mercer</span>
+    <div class="avatar">DM</div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ════ SIDEBAR ════ -->
+  <aside class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Overview</div>
+      <a class="sidebar-link active">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="1" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="1" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/><rect x="9" y="9" width="6" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/></svg>
+        Dashboard
+      </a>
+      <a class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Orders
+      </a>
+      <a class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M4 14V6m4 8V2m4 12V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Inventory
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Operations</div>
+      <a class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="6" stroke="currentColor" stroke-width="1.5"/><path d="M8 5v3l2 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Transfers
+      </a>
+      <a class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M3 8a5 5 0 0 1 10 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="8" cy="13" r="1" fill="currentColor"/></svg>
+        Suppliers
+      </a>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-section-title">Settings</div>
+      <a class="sidebar-link">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" stroke-width="1.5"/><path d="M8 1v2m0 10v2M1 8h2m10 0h2M3.05 3.05l1.4 1.4m7.1 7.1l1.4 1.4M12.95 3.05l-1.4 1.4M4.45 11.55l-1.4 1.4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+        Config
+      </a>
+    </div>
+  </aside>
+
+  <!-- ════ MAIN CONTENT ════ -->
+  <main class="main">
+
+    <div class="page-header">
+      <h1>Distribution Dashboard</h1>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-label">Total On Hand</div>
+        <div class="kpi-value">75,500</div>
+        <div class="kpi-change flat">Across 3 DCs</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Available</div>
+        <div class="kpi-value">68,000</div>
+        <div class="kpi-change flat">After reservations</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">Open Orders</div>
+        <div class="kpi-value">12</div>
+        <div class="kpi-change up">
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M6 9V3m0 0L3 6m3-3l3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          +2 since last week
+        </div>
+      </div>
+    </div>
+
+    <!-- Content Grid -->
+    <div class="content-grid">
+
+      <!-- Inventory by DC -->
+      <div class="card full-card">
+        <div class="card-header">
+          <span class="card-title">Inventory by Distribution Center</span>
+          <span class="card-badge">Live</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Location</th>
+                <th>On Hand</th>
+                <th>Reserved</th>
+                <th>Available</th>
+                <th>Daily Velocity</th>
+                <th>Days of Stock</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--text)">Seattle</td>
+                <td>42,000</td>
+                <td>3,500</td>
+                <td>38,500</td>
+                <td>1,200</td>
+                <td style="color:var(--accent);font-weight:600;">32.1</td>
+                <td><span class="status-dot green"></span>Healthy</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text)">Portland</td>
+                <td>15,500</td>
+                <td>2,800</td>
+                <td>12,700</td>
+                <td>1,100</td>
+                <td style="color:var(--danger);font-weight:600;">11.5</td>
+                <td><span class="status-dot red"></span>Low</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text)">Vancouver</td>
+                <td>18,000</td>
+                <td>1,200</td>
+                <td>16,800</td>
+                <td>850</td>
+                <td style="color:var(--text-muted);font-weight:600;">19.8</td>
+                <td><span class="status-dot yellow"></span>Adequate</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Days of Stock visual -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Days of Stock</span>
+          <span class="card-badge">vs. 21-day target</span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:16px;margin-top:4px;">
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:13px;color:var(--text);">Seattle</span>
+              <span style="font-size:13px;color:var(--accent);font-weight:600;">32.1 days</span>
+            </div>
+            <div class="bar-wrap" style="height:10px;">
+              <div class="bar-fill green" style="width:100%;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:13px;color:var(--text);">Vancouver</span>
+              <span style="font-size:13px;color:var(--text-muted);font-weight:600;">19.8 days</span>
+            </div>
+            <div class="bar-wrap" style="height:10px;">
+              <div class="bar-fill yellow" style="width:62%;"></div>
+            </div>
+          </div>
+          <div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:6px;">
+              <span style="font-size:13px;color:var(--text);">Portland</span>
+              <span style="font-size:13px;color:var(--danger);font-weight:600;">11.5 days</span>
+            </div>
+            <div class="bar-wrap" style="height:10px;">
+              <div class="bar-fill red" style="width:36%;"></div>
+            </div>
+          </div>
+          <div style="border-top:1px dashed var(--border-light);padding-top:10px;margin-top:4px;font-size:11px;color:var(--text-dim);">
+            Target: 21 days &nbsp;·&nbsp; Reorder trigger: 14 days &nbsp;·&nbsp; Minimum acceptable: 7 days
+          </div>
+        </div>
+      </div>
+
+      <!-- Business Rules -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Target Inventory Policy</span>
+        </div>
+        <div class="rules-grid">
+          <div class="rule-item">
+            <div class="rule-label">Target Stock</div>
+            <div class="rule-value">21<span class="unit">days</span></div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-label">Reorder Trigger</div>
+            <div class="rule-value">14<span class="unit">days</span></div>
+          </div>
+          <div class="rule-item">
+            <div class="rule-label">Minimum Acceptable</div>
+            <div class="rule-value">7<span class="unit">days</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recent Orders -->
+      <div class="card full-card">
+        <div class="card-header">
+          <span class="card-title">Recent Orders</span>
+          <span class="card-badge">Last 7 days</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Order</th><th>Destination</th><th>Qty</th><th>Status</th></tr></thead>
+            <tbody>
+              <tr>
+                <td style="color:var(--text)">#ORD-4821</td>
+                <td>Portland</td>
+                <td>5,000 units</td>
+                <td><span class="status-dot yellow"></span>In Transit</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text)">#ORD-4819</td>
+                <td>Vancouver</td>
+                <td>3,200 units</td>
+                <td><span class="status-dot green"></span>Delivered</td>
+              </tr>
+              <tr>
+                <td style="color:var(--text)">#ORD-4817</td>
+                <td>Seattle</td>
+                <td>2,800 units</td>
+                <td><span class="status-dot green"></span>Delivered</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
